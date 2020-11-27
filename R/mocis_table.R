@@ -34,6 +34,7 @@ mocis_table <- function(data, dec = 2){
               `$n_{\\text{obs}}$` = map_dbl(aggdata, ~sum(.x$n)),
               `$n_y$` = map_dbl(aggdata, ~length(unique(.x[["YEAR"]]))),
               prc_all_lod = map_dbl(aggdata, ~mean(.x[["all.lod"]])),
+              prc_all_lod10 = map_dbl(aggdata, ~mean(.x %>% filter(YEAR > (max(YEAR)-10)) %>% pull(all.lod))),
               Years = map_chr(aggdata, ~paste(range(.x[["YEAR"]]), collapse = "-")),
               `Slope (95$\\%$ CI)` = ifelse(prc_all_lod > max_all_lod, "-", 
                                             map_chr(linmod, ~print_ci(.x[["slope"]], .x[["lower"]], .x[["upper"]]))),
@@ -56,21 +57,21 @@ mocis_table <- function(data, dec = 2){
               `Conc$_{\\text{pred}}$ (95$\\%$ CI)` = ifelse(prc_all_lod > max_all_lod, "-", 
                                                             map_chr(linmod, ~print_ci(.x[["yhat.last"]], .x[["yhat.last.lower"]], .x[["yhat.last.upper"]]))),
               # Past ten years of data
-              `Slope$_{10y}$ (95$\\%$ CI)` = ifelse(prc_all_lod > max_all_lod, "-", 
+              `Slope$_{10y}$ (95$\\%$ CI)` = ifelse(prc_all_lod10 > max_all_lod, "-", 
                                                     map_chr(linmod10, ~print_ci(.x[["slope"]], .x[["lower"]], .x[["upper"]]))),
-              `LDT$_{10y}$` = ifelse(prc_all_lod > max_all_lod, "-", 
+              `LDT$_{10y}$` = ifelse(prc_all_lod10 > max_all_lod, "-", 
                                      map_chr(linmod10, ~print_value(.x[["cv"]][2]))),
-              `YRQ$_{10}$` = ifelse(prc_all_lod > max_all_lod, "-", 
+              `YRQ$_{10}$` = ifelse(prc_all_lod10 > max_all_lod, "-", 
                                     map_chr(linmod10, ~print_value(.x[["cv"]][3]))),
-              `Pow$_{tot}$` = ifelse(prc_all_lod > max_all_lod, "-", 
+              `Pow$_{tot}$` = ifelse(prc_all_lod10 > max_all_lod, "-", 
                                      map_chr(linmod10, ~print_value(.x[["power"]][1]))),
-              `$R^2_{10y}$` = ifelse(prc_all_lod > max_all_lod, "-", 
+              `$R^2_{10y}$` = ifelse(prc_all_lod10 > max_all_lod, "-", 
                                      map_chr(linmod10, ~print_value(.x[["r2"]]))),
-              `$p_{10y}$` = ifelse(prc_all_lod > max_all_lod, "-", 
+              `$p_{10y}$` = ifelse(prc_all_lod10 > max_all_lod, "-", 
                                    map_chr(linmod10, ~print_p_value(.x[["p"]]))
               #                      ,
               # `Yr$_{\\text{change}}$` = map_chr(changepoint, ~ifelse(is.null(.x), "",.x[["changepoint"]])))
     )) %>% 
-    select(-prc_all_lod)
+    select(-prc_all_lod, -prc_all_lod10)
 }
 
