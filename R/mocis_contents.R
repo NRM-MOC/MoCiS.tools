@@ -14,5 +14,6 @@ mocis_contents <- function(mocis_object){
     separate(name, into = c("loc", "gen")) %>%
     mutate(gen = str_sub(gen, 1, 4)) %>%
     rename(var = value) %>%
-    arrange(var)
+    arrange(var) %>% 
+    na.omit()
 }
