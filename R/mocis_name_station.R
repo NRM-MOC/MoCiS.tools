@@ -5,7 +5,7 @@
 #' @export
 #' @examples
 mocis_name_station <- function(loc){
-  map_chr(loc, ~ifelse(.x %in% names(stations()[["hav"]]),
-                       stations()[["hav"]][[.x]][["name"]],
-                       paste(.x, "(full name unavailable)")))
+  map_chr(loc, ~dplyr::case_when(.x %in% names(stations()[["hav"]]) ~  stations()[["hav"]][[.x]][["name"]],
+                                 .x %in% names(stations()[["limn"]]) ~  stations()[["limn"]][[.x]][["name"]],              
+                                 TRUE ~ paste(.x, "(full name unavailable)")))
 }
